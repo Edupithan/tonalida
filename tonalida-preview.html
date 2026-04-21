@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tô na Lida - Conectando Profissionais e Clientes</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      color: #212121;
+    }
+
+    /* ── APP SHELL ── */
+    .app {
+      max-width: 430px;
+      margin: 0 auto;
+      background: #fff;
+      min-height: 100vh;
+      position: relative;
+      box-shadow: 0 0 20px rgba(0,0,0,.1);
+    }
+
+    .screen { display: none; flex-direction: column; min-height: 100vh; }
+    .screen.active { display: flex; }
+
+    /* ── HEADER ── */
+    .header {
+      background: #FF6B35;
+      color: #fff;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header h1 { font-size: 18px; font-weight: 700; flex: 1; }
+    .header .back-btn {
+      background: none; border: none; color: #fff;
+      font-size: 22px; cursor: pointer; padding: 4px;
+    }
+    .header .action-btn {
+      background: none; border: none; color: #fff;
+      font-size: 22px; cursor: pointer; padding: 4px;
+    }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      position: sticky;
+      bottom: 0;
+      background: #fff;
+      border-top: 1px solid #e0e0e0;
+      display: flex;
+      z-index: 100;
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 4px 6px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-size: 11px;
+      color: #757575;
+      gap: 3px;
+      transition: color .2s;
+    }
+    .nav-item.active { color: #FF6B35; }
+    .nav-item .icon { font-size: 22px; }
+
+    /* ── FORMS ── */
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #424242; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 12px; border: 1px solid #e0e0e0;
+      border-radius: 8px; font-size: 15px; outline: none;
+      transition: border-color .2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: #FF6B35;
+    }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      width: 100%; padding: 14px; border: none; border-radius: 8px;
+      font-size: 16px; font-weight: 600; cursor: pointer;
+      transition: opacity .2s;
+    }
+    .btn:active { opacity: .8; }
+    .btn-primary { background: #FF6B35; color: #fff; }
+    .btn-secondary { background: #f5f5f5; color: #424242; border: 1px solid #e0e0e0; }
+    .btn-outline { background: transparent; color: #FF6B35; border: 2px solid #FF6B35; }
+    .btn-sm { padding: 8px 16px; font-size: 14px; width: auto; }
+
+    /* ── CARDS ── */
+    .card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    /* ── BADGES ── */
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .badge-orange { background: #fff3e0; color: #e65100; }
+    .badge-green  { background: #e8f5e9; color: #2e7d32; }
+    .badge-blue   { background: #e3f2fd; color: #1565c0; }
+    .badge-gray   { background: #f5f5f5; color: #616161; }
+
+    /* ── CONTENT ── */
+    .content { flex: 1; overflow-y: auto; padding: 16px; }
+
+    /* ── DIVIDER ── */
+    .divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; color: #9e9e9e; font-size: 13px; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e0e0e0; }
+
+    /* ── STAR RATING ── */
+    .stars { color: #FFC107; font-size: 14px; }
+    .stars span { color: #9e9e9e; font-size: 13px; }
+
+    /* ── AVATAR ── */
+    .avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: #FF6B35; color: #fff; font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; flex-shrink: 0;
+    }
+    .avatar-lg { width: 80px; height: 80px; font-size: 28px; }
+    .avatar-xl { width: 120px; height: 120px; font-size: 40px; border: 3px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+
+    /* ── CHIP ── */
+    .chip {
+      display: inline-block; padding: 6px 12px; border: 1px solid #e0e0e0;
+      border-radius: 20px; font-size: 13px; cursor: pointer;
+      transition: all .2s; margin: 4px;
+    }
+    .chip.active { background: #FF6B35; color: #fff; border-color: #FF6B35; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(100px);
+      background: #212121; color: #fff; padding: 12px 20px; border-radius: 8px;
+      font-size: 14px; transition: transform .3s; z-index: 9999; white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── STEPPER ── */
+    .stepper {
+      display: flex; align-items: center; padding: 16px;
+      border-bottom: 1px solid #e0e0e0; background: #fafafa;
+    }
+    .step-dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #e0e0e0; color: #757575;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; flex-shrink: 0;
+    }
+    .step-dot.active { background: #FF6B35; color: #fff; }
+    .step-dot.done { background: #4CAF50; color: #fff; }
+    .step-line { flex: 1; height: 2px; background: #e0e0e0; margin: 0 4px; }
+    .step-line.done { background: #4CAF50; }
+
+    /* ── SEARCH BOX ── */
+    .search-box {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px; background: #f5f5f5; border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    .search-box input { background: none; border: none; outline: none; flex: 1; font-size: 15px; }
+    .search-box .icon { color: #757575; font-size: 20px; }
+
+    /* ── FILTER ROW ── */
+    .filter-row {
+      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;
+      scrollbar-width: none;
+    }
+    .filter-row::-webkit-scrollbar { display: none; }
+
+    /* ── PROFESSIONAL CARD ── */
+    .prof-card {
+      display: flex; gap: 12px; background: #fff;
+      border: 1px solid #e0e0e0; border-radius: 12px;
+      padding: 14px; margin-bottom: 12px; cursor: pointer;
+      transition: box-shadow .2s;
+    }
+    .prof-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,.1); }
+    .prof-card-info { flex: 1; }
+    .prof-card-name { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+    .prof-card-sub  { font-size: 13px; color: #616161; margin-bottom: 6px; }
+    .prof-card-price { font-size: 14px; font-weight: 600; color: #FF6B35; }
+    .prof-card-actions { display: flex; gap: 8px; align-items: center; }
+
+    /* ── CHAT ── */
+    .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+    .msg { max-width: 75%; padding: 10px 14px; border-radius: 16px; font-size: 15px; }
+    .msg-sent { background: #FF6B35; color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .msg-recv { background: #f5f5f5; color: #212121; align-self: flex-start; border-bottom-left-radius: 4px; }
+    .msg-time { font-size: 11px; opacity: .7; margin-top: 4px; text-align: right; }
+    .msg-status { font-size: 11px; }
+    .chat-input {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 16px; border-top: 1px solid #e0e0e0;
+    }
+    .chat-input input {
+      flex: 1; padding: 10px 14px; border: 1px solid #e0e0e0;
+      border-radius: 24px; outline: none; font-size: 15px;
+    }
+    .chat-input input:focus { border-color: #FF6B35; }
+    .chat-input .send-btn {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: #FF6B35; border: none; color: #fff; cursor: pointer;
+      font-size: 18px; display: flex; align-items: center; justify-content: center;
+    }
+    .chat-action-btn {
+      background: none; border: none; font-size: 22px; cursor: pointer; color: #757575;
+    }
+
+    /* ── PORTFOLIO GRID ── */
+    .portfolio-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+    }
+    .portfolio-item {
+      aspect-ratio: 1; background: #e0e0e0; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; cursor: pointer; overflow: hidden; position: relative;
+    }
+    .portfolio-item img { width: 100%; height: 100%; object-fit: cover; }
+    .portfolio-item .overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,.5);
+      color: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700;
+    }
+
+    /* ── NOTIFICATION ITEM ── */
+    .notif-item {
+      display: flex; gap: 12px; padding: 14px; border-bottom: 1px solid #f5f5f5;
+      cursor: pointer; transition: background .2s;
+    }
+    .notif-item:hover { background: #fafafa; }
+    .notif-item.unread { background: #fff8f5; }
+    .notif-dot { width: 10px; height: 10px; border-radius: 50%; background: #FF6B35; flex-shrink: 0; margin-top: 4px; }
+
+    /* ── PROFILE HEADER ── */
+    .profile-hero {
+      background: linear-gradient(180deg, #FF6B35 0%, #f5f5f5 100%);
+      padding: 32px 16px 16px;
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+
+    /* ── SECTION TITLE ── */
+    .section-title { font-size: 16px; font-weight: 700; margin: 20px 0 12px; color: #212121; }
+
+    /* ── AVAILABILITY CHIP ── */
+    .avail-chip { font-size: 12px; padding: 4px 10px; background: #e8f5e9; color: #2e7d32; border-radius: 12px; }
+
+    /* ── RATING BIG ── */
+    .rating-big { font-size: 48px; font-weight: 800; color: #212121; line-height: 1; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 40px 16px; text-align: center; }
+    .empty-state .icon { font-size: 64px; }
+    .empty-state p { color: #757575; font-size: 15px; }
+
+    .hidden { display: none !important; }
+
+    /* ── LOGO ── */
+    .logo-section { display: flex; flex-direction: column; align-items: center; padding: 48px 24px 32px; }
+    .logo-icon { font-size: 64px; margin-bottom: 8px; }
+    .logo-title { font-size: 28px; font-weight: 800; color: #FF6B35; }
+    .logo-sub { font-size: 14px; color: #757575; margin-top: 4px; }
+
+    /* ── CATEGORY GRID ── */
+    .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .cat-item {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      padding: 16px 8px; border: 2px solid #e0e0e0; border-radius: 12px;
+      cursor: pointer; transition: all .2s; text-align: center;
+    }
+    .cat-item:hover, .cat-item.active { border-color: #FF6B35; background: #fff8f5; }
+    .cat-item .icon { font-size: 32px; }
+    .cat-item span { font-size: 12px; font-weight: 600; color: #424242; }
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ══════════════════════════════
+       TELA 1: LOGIN / CADASTRO
+  ══════════════════════════════ -->
+  <div class="screen active" id="screen-login">
+    <div class="content" style="justify-content: center; display: flex; flex-direction: column; min-height: 100vh;">
+      <div class="logo-section">
+        <div class="logo-icon">🛠️</div>
+        <div class="logo-title">Tô na Lida</div>
+        <div class="logo-sub">Conectando profissionais e clientes</div>
+      </div>
+
+      <div style="padding: 0 24px 32px;">
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="login-email" placeholder="seu@email.com">
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="login-password" placeholder="••••••••">
+        </div>
+
+        <button class="btn btn-primary" onclick="fazerLogin()">Entrar</button>
+
+        <div class="divider">ou continue com</div>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+          <button class="btn btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:8px;" onclick="showToast('Login Google em breve!')">
+            <span>🇬</span> Google
+          </button>
+          <button class="btn btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:8px;" onclick="showToast('Login Apple em breve!')">
+            <span>🍎</span> Apple
+          </button>
+        </div>
+
+        <div style="text-align: center;">
+          <button class="btn btn-outline" onclick="showScreen('screen-tipo-perfil')">
+            Não tem conta? Cadastre-se
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       TELA 2: ESCOLHA TIPO DE PERFIL
+  ══════════════════════════════ -->
+  <div class="screen" id="screen-tipo-perfil">
+    <div class="header">
+      <button class="back-btn" onclick="showScreen('screen-login')">←</button>
+      <h1>Como quer usar o app?</h1>
+    </div>
+    <div class="content" style="display:flex;flex-direction:column;gap:16px;padding-top:32px;">
+      <div class="card" style="cursor:pointer;border:2px solid transparent;transition:.2s"
+           id="card-cliente" onclick="selecionarTipo('cliente')">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="font-size:48px;">👤</div>
+          <div>
+            <div style="font-size:18px;font-weight:700;">Sou Cliente</div>
+            <div style="font-size:14px;color:#757575;margin-top:4px;">Preciso de serviços profissionais</div>
+            <div style="font-size:13px;color:#9e9e9e;margin-top:8px;">
+              ✓ Busque por profissionais<br>
+              ✓ Solicite orçamentos<br>
+              ✓ Avalie serviços
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="cursor:pointer;border:2px solid transparent;transition:.2s"
+           id="card-profissional" onclick="selecionarTipo('profissional')">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="font-size:48px;">🔧</div>
+          <div>
+            <div style="font-size:18px;font-weight:700;">Sou Profissional</div>
+            <div style="font-size:14px;color:#757575;margin-top:4px;">Quero oferecer meus serviços</div>
+            <div style="font-size:13px;color:#9e9e9e;margin-top:8px;">
+              ✓ Crie seu perfil profissional<br>
+              ✓ Mostre seu portfólio<br>
+              ✓ Receba clientes
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-continuar-tipo" onclick="continuarCadastro()"
+              style="margin-top:8px;" disabled>
+        Continuar
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       TELA 3: BUSCA (CLIENTE)
+  ══════════════════════════════ -->
+  <div class="screen" id="screen-busca">
+    <div class="header" style="flex-direction:column;align-items:stretch;gap:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <h1 style="font-size:20px;">🛠️ Tô na Lida</h1>
+        <div style="display:flex;gap:4px;">
+          <button class="action-btn" onclick="showScreen('screen-notificacoes')" style="position:relative;">
+            🔔
+            <span style="position:absolute;top:2px;right:2px;width:8px;height:8px;background:#e53935;border-radius:50%;"></span>
+          </button>
+          <button class="action-btn" onclick="showScreen('screen-perfil-usuario')">👤</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Busca -->
+      <div class="search-box">
+        <span class="icon">🔍</span>
+        <input type="text" placeholder="Buscar profissionais..." id="search-input" oninput="filtrarProfissionais()">
+      </div>
+
+      <!-- Filtros rápidos -->
+      <div class="filter-row" style="margin-bottom:8px;">
+        <button class="btn btn-sm btn-secondary">Filtros ▼</button>
+        <button class="btn btn-sm btn-secondary">Cidade ▼</button>
+        <button class="btn btn-sm btn-secondary">Ordenar ▼</button>
+        <button class="btn btn-sm btn-secondary">Avaliação ▼</button>
+        <button class="btn btn-sm btn-secondary">Preço ▼</button>
+      </div>
+
+      <!-- Categorias -->
+      <div class="filter-row" style="margin-bottom:16px;">
+        <div class="chip active" onclick="filtrarCategoria(this,'')">Todos</div>
+        <div class="chip" onclick="filtrarCategoria(this,'construcao-civil')">🏗️ Construção</div>
+        <div class="chip" onclick="filtrarCategoria(this,'beleza')">💅 Beleza</div>
+        <div class="chip" onclick="filtrarCategoria(this,'automotivo')">🚗 Automotivo</div>
+        <div class="chip" onclick="filtrarCategoria(this,'domesticos')">🏠 Doméstico</div>
+        <div class="chip" onclick="filtrarCategoria(this,'tecnologia')">💻 Tecnologia</div>
+        <div class="chip" onclick="filtrarCategoria(this,'eventos')">🎉 Eventos</div>
+        <div class="chip" onclick="filtrarCategoria(this,'saude')">❤️ Saúde</div>
+      </div>
+
+      <!-- Lista de profissionais -->
+      <div id="lista-profissionais">
+        <!-- Renderizado via JS -->
+      </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="showScreen('screen-busca')">
+        <span class="icon">🔍</span> Buscar
+      </button>
+      <button class="nav-item" onclick="showScreen('screen-conversas')">
+        <span class="icon">💬</span> Mensagens
+      </button>
+      <button class="nav-item" onclick="showScreen('screen-favoritos')">
+        <span class="icon">❤️</span> Favoritos
+      </button>
+      <button class="nav-item" onclick="showScreen('screen-perfil-usuario')">
+        <span class="icon">👤</span> Perfil
+      </button>
+    </nav>
+  </div>
+
+  <!-- ══════════════════════════════
+       TELA 4: PERFIL DO PROFISSIONAL
+  ══════════════════════════════ -->
+  <div class="screen" id="screen-perfil-prof">
+    <div class="header">
+      <button class="back-btn" onclick="voltarBusca()">←</button>
+      <h1 id="prof-header-nome">Profissional</h1>
+      <button class="action-btn" onclick="compartilhar()">⎙</button>
+    </div>
+
+    <div class="content" style="padding:0;">
+      <!-- Hero -->
+      <div class="profile-hero">
+        <div class="avatar avatar-xl" id="prof-avatar-initials" style="background:#FF6B35;">J</div>
+        <div style="text-align:center;">
+          <div style="font-size:22px;font-weight:800;color:#212121;" id="prof-nome">João Pintor</div>
+          <div style="font-size:14px;color:#616161;margin:4px 0;" id="prof-categoria">Pintura Residencial</div>
+          <div class="stars" id="prof-stars">⭐⭐⭐⭐⭐
+            <span id="prof-avaliacao-texto">(4.8 • 127 avaliações)</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+          <span class="badge badge-green" id="prof-verificado">✓ Verificado</span>
+          <span class="avail-chip" id="prof-disponivel">📅 Disponível hoje</span>
+          <span class="badge badge-orange" id="prof-aceita">🏠 Presencial</span>
+        </div>
+      </div>
+
+      <div style="padding:16px;">
+        <!-- Info rápida -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+          <div class="card" style="text-align:center;padding:12px;">
+            <div style="font-size:20px;font-weight:800;color:#FF6B35;" id="prof-valor-hora">R$ 50</div>
+            <div style="font-size:12px;color:#757575;">por hora</div>
+          </div>
+          <div class="card" style="text-align:center;padding:12px;">
+            <div style="font-size:20px;font-weight:800;" id="prof-experiencia">5 anos</div>
+            <div style="font-size:12px;color:#757575;">experiência</div>
+          </div>
+          <div class="card" style="text-align:center;padding:12px;grid-column:span 2;">
+            <div style="font-size:14px;color:#616161;">📍 <span id="prof-localizacao">Centro, São Paulo</span></div>
+          </div>
+        </div>
+
+        <!-- Bio -->
+        <div class="section-title">Sobre</div>
+        <p style="color:#424242;font-size:15px;line-height:1.6;" id="prof-bio">
+          Profissional experiente em pintura residencial e comercial. Trabalho com qualidade e pontualidade. Utilizo materiais de primeira linha.
+        </p>
+
+        <!-- Portfólio -->
+        <div class="section-title">Portfólio</div>
+        <div class="portfolio-grid" id="prof-portfolio">
+          <div class="portfolio-item" style="background:#e3f2fd;">🖼️</div>
+          <div class="portfolio-item" style="background:#f3e5f5;">🎨</div>
+          <div class="portfolio-item" style="background:#e8f5e9;">🏠</div>
+          <div class="portfolio-item" style="background:#fff3e0;">🖌️</div>
+          <div class="portfolio-item" style="background:#fce4ec;">🎭</div>
+          <div class="portfolio-item" style="background:#e0f7fa;">
+            <div class="overlay">+5</div>
+          </div>
+        </div>
+
+        <!-- Especialidades -->
+        <div class="section-title">Especialidades</div>
+        <div id="prof-especialidades">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="color:#FF6B35;">•</span> Pintura Residencial
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="color:#FF6B35;">•</span> Pintura Comercial
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="color:#FF6B35;">•</span> Textura e Grafiato
+          </div>
+        </div>
+
+        <!-- Avaliações -->
+        <div class="section-title">Avaliações</div>
+        <div id="prof-avaliacoes">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+              <div class="avatar" style="background:#9C27B0;font-size:14px;">M</div>
+              <div>
+                <div style="font-weight:600;font-size:14px;">Maria Silva</div>
+                <div class="stars" style="font-size:12px;">⭐⭐⭐⭐⭐</div>
+              </div>
+              <div style="margin-left:auto;font-size:12px;color:#9e9e9e;">há 2 dias</div>
+            </div>
+            <p style="font-size:14px;color:#424242;">Excelente profissional! Muito pontual e o trabalho ficou perfeito.</p>
+          </div>
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+              <div class="avatar" style="background:#2196F3;font-size:14px;">C</div>
+              <div>
+                <div style="font-weight:600;font-size:14px;">Carlos Pereira</div>
+                <div class="stars" style="font-size:12px;">⭐⭐⭐⭐</div>
+              </div>
+              <div style="margin-left:auto;font-size:12px;color:#9e9e9e;">há 5 dias</div>
+            </div>
+            <p style="font-size:14px;color:#424242;">Ótimo serviço, recomendo. Entregou no prazo combinado.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ações fixas -->
+    <div style="padding:12px 16px;display:flex;gap:12px;border-top:1px solid #e0e0e0;background:#fff;">
+      <button class="btn btn-outline" style="flex:0 0 52px;padding:12px;" onclick="toggleFavorito()">
+        <span id="fav-icon">❤️</span>
+      </button>
+      <button class="btn btn-primary" style="flex:1;" onclick="abrirChat()">
+        💬 Conversar
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       TELA 5: CHAT
+  ══════════════════════════════ -->
+  <div class="screen" id="screen-chat">
+    <div class="header">
+      <button class="back-btn" onclick="showScreen('screen-conversas')">←</button>
+      <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#9C27B0;">J</div>
+      <div style="flex:1;">
+        <div style="font-size:16px;font-weight:700;" id="chat-nome">João Pintor</div>
+        <div style="font-size:12px;opacity:.85;" id="chat-status">Online agora</div>
+      </div>
+      <button class="action-btn" onclick="showScreen('screen-perfil-prof')">👤</button>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+      <!-- Mensagens renderizadas via JS -->
+    </div>
+
+    <div class="chat-input">
+      <button class="chat-action-btn" onclick="showToast('Anexo em breve!')">📎</button>
+      <button class="chat-action-btn" onclick="showToast('Câmera em breve!')">📷</button>
+      <input type="text" id="msg-input" placeholder="Digite sua mensagem..." onkeypress="handleMsgKey(event)">
+      <button class="send-btn" onclick="enviarMensagem()">➤</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       TELA 6: CADASTRO PROFISSIONAL (STEPPER)
+  ══════════════════════════════ -->
+  <div class="screen" id="screen-cadastro-prof">
+    <div class="header">
+      <button class="back-btn" onclick="showScreen('screen-tipo-perfil')">←</button>
+      <h1>Cadastro Profissional</h1>
+    </div>
+
+    <!-- Stepper visual -->
+    <div class="stepper">
+      <div class="step-dot active" id="dot-1">1</div>
+      <div class="step-line" id="line-1"></div>
+      <div class="step-dot" id="dot-2">2</div>
+      <div class="step-line" id="line-2"></div>
+      <div class="step-dot" id="dot-3">3</div>
+      <div class="step-line" id="line-3"></div>
+      <div class="step-dot" id="dot-4">4</div>
+    </div>
+
+    <!-- PASSO 1: Dados Pessoais -->
+    <div id="step-1" class="content">
+      <div style="font-size:18px;font-weight:700;margin-bottom:20px;">👤 Dados Pessoais</div>
+      <div class="form-group">
+        <label>Nome Completo *</label>
+        <input type="text" id="cad-nome" placeholder="Seu nome completo">
+      </div>
+      <div class="form-group">
+        <label>Telefone *</label>
+        <input type="tel" id="cad-telefone" placeholder="(00) 00000-0000">
+      </div>
+      <div class="form-group">
+        <label>E-mail *</label>
+        <input type="email" id="cad-email" placeholder="seu@email.com">
+      </div>
+      <div class="form-group">
+        <label>Senha *</label>
+        <input type="password" id="cad-senha" placeholder="Mínimo 8 caracteres">
+      </div>
+      <div class="form-group">
+        <label>CPF/CNPJ (opcional)</label>
+        <input type="text" id="cad-cpf" placeholder="000.000.000-00">
+      </div>
+      <button class="btn btn-primary" onclick="goStep(2)">Próximo →</button>
+    </div>
+
+    <!-- PASSO 2: Endereço -->
+    <div id="step-2" class="content hidden">
+      <div style="font-size:18px;font-weight:700;margin-bottom:20px;">📍 Endereço</div>
+      <div style="display:flex;gap:8px;">
+        <div class="form-group" style="flex:1;">
+          <label>CEP *</label>
+          <input type="text" id="cad-cep" placeholder="00000-000" onblur="buscarCEP()">
+        </div>
+        <div style="padding-top:24px;">
+          <button class="btn btn-secondary btn-sm" onclick="buscarCEP()">Buscar</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Logradouro</label>
+        <input type="text" id="cad-logradouro" placeholder="Rua, Avenida...">
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div class="form-group" style="flex:0 0 100px;">
+          <label>Número</label>
+          <input type="text" id="cad-numero" placeholder="Nº">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>Complemento</label>
+          <input type="text" id="cad-complemento" placeholder="Apto, casa...">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Bairro</label>
+        <input type="text" id="cad-bairro" placeholder="Bairro">
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div class="form-group" style="flex:1;">
+          <label>Cidade</label>
+          <input type="text" id="cad-cidade" placeholder="Cidade">
+        </div>
+        <div class="form-group" style="flex:0 0 70px;">
+          <label>UF</label>
+          <input type="text" id="cad-estado" placeholder="SP" maxlength="2">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Raio de atendimento: <span id="raio-valor">10</span> km</label>
+        <input type="range" id="cad-raio" min="1" max="100" value="10"
+               oninput="document.getElementById('raio-valor').textContent=this.value"
+               style="width:100%;accent-color:#FF6B35;">
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" onclick="goStep(1)">← Voltar</button>
+        <button class="btn btn-primary" onclick="goStep(3)">Próximo →</button>
+      </div>
+    </div>
+
+    <!-- PASSO 3: Dados Profissionais -->
+    <div id="step-3" class="content hidden">
+      <div style="font-size:18px;font-weight:700;margin-bottom:20px;">🔧 Dados Profissionais</div>
+      <div class="form-group">
+        <label>Categoria Principal *</label>
+        <select id="cad-categoria">
+          <option value="">Selecione...</option>
+          <option value="construcao-civil">Construção Civil</option>
+          <option value="marcenaria">Marcenaria & Móveis</option>
+          <option value="automotivo">Automotivo</option>
+          <option value="beleza">Beleza & Estética</option>
+          <option value="tecnologia">Tecnologia & Design</option>
+          <option value="eventos">Eventos & Alimentação</option>
+          <option value="domesticos">Domésticos & Limpeza</option>
+          <option value="saude">Saúde & Bem-estar</option>
+          <option value="outros">Outros Serviços</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Descrição dos Serviços *</label>
+        <textarea id="cad-bio" placeholder="Descreva seus serviços, experiência e diferenciais..."></textarea>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div class="form-group" style="flex:1;">
+          <label>Valor/hora (R$)</label>
+          <input type="number" id="cad-valor-hora" placeholder="0,00" min="0" step="0.01">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>Valor visita (R$)</label>
+          <input type="number" id="cad-valor-visita" placeholder="0,00" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Anos de Experiência</label>
+        <input type="number" id="cad-experiencia" placeholder="Ex: 5" min="0" max="60">
+      </div>
+      <div class="form-group">
+        <label>Modalidade de Atendimento</label>
+        <div style="display:flex;gap:12px;margin-top:8px;">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" id="cad-presencial" checked> Presencial
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" id="cad-remoto"> Remoto/Online
+          </label>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" onclick="goStep(2)">← Voltar</button>
+        <button class="btn btn-primary" onclick="goStep(4)">Próximo →</button>
+      </div>
+    </div>
+
+    <!-- PASSO 4: Portfólio -->
+    <div id="step-4" class="content hidden">
+      <div style="font-size:18px;font-weight:700;margin-bottom:20px;">🖼️ Portfólio</div>
+      <p style="color:#757575;font-size:14px;margin-bottom:16px;">
+        Adicione fotos dos seus trabalhos para atrair mais clientes.
+      </p>
+
+      <div id="portfolio-upload-grid" class="portfolio-grid" style="gap:8px;margin-bottom:16px;">
+        <div class="portfolio-item" style="border:2px dashed #e0e0e0;background:#fafafa;cursor:pointer;" onclick="simularUpload()">
+          <span style="font-size:32px;color:#9e9e9e;">+</span>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary" onclick="simularUpload()" style="margin-bottom:16px;">
+        📷 Adicionar foto
+      </button>
+
+      <div style="background:#fff8f5;border:1px solid #FFD9C8;border-radius:8px;padding:12px;margin-bottom:20px;font-size:13px;color:#E64A19;">
+        💡 Profissionais com portfólio recebem <strong>3x mais</strong> contatos!
+      </div>
+
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" onclick="goStep(3)">← Voltar</button>
+        <button class="btn btn-primary" onclick="finalizarCadastro()">✓ Finalizar Cadastro</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       TELA 7: LISTA DE CONVERSAS
+  ══════════════════════════════ -->
+  <div class="screen" id="screen-conversas">
+    <div class="header">
+      <h1>Mensagens</h1>
+      <button class="action-btn" onclick="showToast('Busca de conversas em breve!')">🔍</button>
+    </div>
+
+    <div class="content" style="padding:0;">
+      <div id="lista-conversas"></div>
+    </div>
+
+    <nav class="bottom-nav">
+      <button class="nav-item" onclick="showScreen('screen-busca')">
+        <span class="icon">🔍</span> Buscar
+      </button>
+      <button class="nav-item active" onclick="showScreen('screen-conversas')">
+        <span class="icon">💬</span> Mensagens
+      </button>
+      <button class="nav-item" onclick="showScreen('screen-favoritos')">
+        <span class="icon">❤️</span> Favoritos
+      </button>
+      <button class="nav-item" onclick="showScreen('screen-perfil-usuario')">
+        <span class="icon">👤</span> Perfil
+      </button>
+    </nav>
+  </div>
+
+  <!-- ══════════════════════════════
+       TELA 8: FAVORITOS
+  ══════════════════════════════ -->
+  <div class="screen" id="screen-favoritos">
+    <div class="header">
+      <h1>Favoritos</h1>
+    </div>
+
+    <div class="content">
+      <div id="lista-favoritos"></div>
+    </div>
+
+    <nav class="bottom-nav">
+      <button class="nav-item" onclick="showScreen('screen-busca')">
+        <span class="icon">🔍</span> Buscar
+      </button>
+      <button class="nav-item" onclick="showScreen('screen-conversas')">
+        <span class="icon">💬</span> Mensagens
+      </button>
+      <button class="nav-item active" onclick="showScreen('screen-favoritos')">
+        <span class="icon">❤️</span> Favoritos
+      </button>
+      <button class="nav-item" onclick="showScreen('screen-perfil-usuario')">
+        <span class="icon">👤</span> Perfil
+      </button>
+    </nav>
+  </div>
+
+  <!-- ══════════════════════════════
+       TELA 9: PERFIL DO USUÁRIO
+  ══════════════════════════════ -->
+  <div class="screen" id="screen-perfil-usuario">
+    <div class="header">
+      <h1>Meu Perfil</h1>
+    </div>
+
+    <div class="content">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+        <div class="avatar avatar-lg" style="background:#2196F3;">U</div>
+        <div>
+          <div style="font-size:18px;font-weight:700;" id="user-nome">Usuário</div>
+          <div style="font-size:14px;color:#757575;" id="user-email">usuario@email.com</div>
+          <div class="badge badge-blue" id="user-tipo">Cliente</div>
+        </div>
+        <button class="btn btn-sm btn-secondary" style="margin-left:auto;" onclick="editarPerfil()">Editar</button>
+      </div>
+
+      <div style="border-top:1px solid #e0e0e0;padding-top:16px;">
+        <button class="btn btn-secondary" style="margin-bottom:12px;display:flex;align-items:center;gap:12px;text-align:left;"
+                onclick="showScreen('screen-conversas')">
+          💬 <span>Minhas Conversas</span>
+        </button>
+        <button class="btn btn-secondary" style="margin-bottom:12px;display:flex;align-items:center;gap:12px;text-align:left;"
+                onclick="showScreen('screen-favoritos')">
+          ❤️ <span>Favoritos</span>
+        </button>
+        <button class="btn btn-secondary" style="margin-bottom:12px;display:flex;align-items:center;gap:12px;text-align:left;"
+                onclick="showToast('Histórico em breve!')">
+          📋 <span>Histórico de Contratações</span>
+        </button>
+        <button class="btn btn-secondary" style="margin-bottom:12px;display:flex;align-items:center;gap:12px;text-align:left;"
+                onclick="showToast('Notificações em breve!')">
+          🔔 <span>Notificações</span>
+        </button>
+        <button class="btn btn-secondary" style="margin-bottom:12px;display:flex;align-items:center;gap:12px;text-align:left;"
+                onclick="showToast('Privacidade LGPD em breve!')">
+          🔒 <span>Privacidade & LGPD</span>
+        </button>
+        <button class="btn btn-secondary" style="margin-bottom:12px;display:flex;align-items:center;gap:12px;text-align:left;"
+                onclick="fazerLogout()">
+          🚪 <span>Sair</span>
+        </button>
+      </div>
+    </div>
+
+    <nav class="bottom-nav">
+      <button class="nav-item" onclick="showScreen('screen-busca')">
+        <span class="icon">🔍</span> Buscar
+      </button>
+      <button class="nav-item" onclick="showScreen('screen-conversas')">
+        <span class="icon">💬</span> Mensagens
+      </button>
+      <button class="nav-item" onclick="showScreen('screen-favoritos')">
+        <span class="icon">❤️</span> Favoritos
+      </button>
+      <button class="nav-item active" onclick="showScreen('screen-perfil-usuario')">
+        <span class="icon">👤</span> Perfil
+      </button>
+    </nav>
+  </div>
+
+  <!-- ══════════════════════════════
+       TELA 10: NOTIFICAÇÕES
+  ══════════════════════════════ -->
+  <div class="screen" id="screen-notificacoes">
+    <div class="header">
+      <button class="back-btn" onclick="showScreen('screen-busca')">←</button>
+      <h1>Notificações</h1>
+      <button class="action-btn" onclick="marcarTodasLidas()">✓ Todas</button>
+    </div>
+
+    <div id="lista-notificacoes" style="flex:1;overflow-y:auto;"></div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════
+// ESTADO DA APLICAÇÃO
+// ══════════════════════════════════════
+const state = {
+  currentScreen: 'screen-login',
+  tipoPerfil: null,
+  currentStep: 1,
+  profissionalAtual: null,
+  favoritoAtivo: false,
+  mensagens: [],
+  profissionaisFiltrados: [],
+};
+
+// ══════════════════════════════════════
+// DADOS MOCK (simulam resposta do Supabase)
+// ══════════════════════════════════════
+const mockProfissionais = [
+  {
+    id: '1', nome_completo: 'João Pintor', categoria_principal: 'Pintura Residencial',
+    categoria_slug: 'construcao-civil', media_avaliacao: 4.8, total_avaliacoes: 127,
+    valor_hora: 50, verificado: true, distancia: '2km',
+    bio: 'Profissional experiente em pintura residencial e comercial. Trabalho com qualidade e pontualidade.',
+    aceita_presencial: true, aceita_remoto: false, experiencia_anos: 5,
+    localizacoes: [{cidade: 'São Paulo', bairro: 'Centro'}],
+    destaque: true, initials: 'JP', bg: '#FF6B35',
+  },
+  {
+    id: '2', nome_completo: 'Maria Marceneira', categoria_principal: 'Móveis Planejados',
+    categoria_slug: 'marcenaria', media_avaliacao: 4.5, total_avaliacoes: 89,
+    valor_hora: 80, verificado: false, distancia: '5km',
+    bio: 'Especialista em marcenaria sob medida e restauração de móveis antigos.',
+    aceita_presencial: true, aceita_remoto: false, experiencia_anos: 8,
+    localizacoes: [{cidade: 'São Paulo', bairro: 'Pinheiros'}],
+    destaque: false, initials: 'MM', bg: '#8B4513',
+  },
+  {
+    id: '3', nome_completo: 'Carlos Eletricista', categoria_principal: 'Instalações Elétricas',
+    categoria_slug: 'construcao-civil', media_avaliacao: 4.9, total_avaliacoes: 203,
+    valor_hora: 65, verificado: true, distancia: '1km',
+    bio: 'Eletricista certificado com mais de 10 anos de experiência.',
+    aceita_presencial: true, aceita_remoto: false, experiencia_anos: 10,
+    localizacoes: [{cidade: 'São Paulo', bairro: 'Moema'}],
+    destaque: true, initials: 'CE', bg: '#1565C0',
+  },
+  {
+    id: '4', nome_completo: 'Ana Cabeleireira', categoria_principal: 'Cabelo & Estética',
+    categoria_slug: 'beleza', media_avaliacao: 4.7, total_avaliacoes: 156,
+    valor_hora: 40, verificado: true, distancia: '3km',
+    bio: 'Especialista em cortes, coloração e tratamentos capilares.',
+    aceita_presencial: true, aceita_remoto: false, experiencia_anos: 6,
+    localizacoes: [{cidade: 'São Paulo', bairro: 'Vila Olímpia'}],
+    destaque: false, initials: 'AC', bg: '#C2185B',
+  },
+  {
+    id: '5', nome_completo: 'Roberto Mecânico', categoria_principal: 'Mecânica Geral',
+    categoria_slug: 'automotivo', media_avaliacao: 4.6, total_avaliacoes: 78,
+    valor_hora: 90, verificado: false, distancia: '7km',
+    bio: 'Mecânico com 15 anos de experiência em carros nacionais e importados.',
+    aceita_presencial: true, aceita_remoto: false, experiencia_anos: 15,
+    localizacoes: [{cidade: 'São Paulo', bairro: 'Santo André'}],
+    destaque: false, initials: 'RM', bg: '#1565C0',
+  },
+  {
+    id: '6', nome_completo: 'Lucia Diarista', categoria_principal: 'Limpeza Residencial',
+    categoria_slug: 'domesticos', media_avaliacao: 4.9, total_avaliacoes: 312,
+    valor_hora: 30, verificado: true, distancia: '4km',
+    bio: 'Serviço de limpeza completo e organização. Referências disponíveis.',
+    aceita_presencial: true, aceita_remoto: false, experiencia_anos: 12,
+    localizacoes: [{cidade: 'São Paulo', bairro: 'Tatuapé'}],
+    destaque: true, initials: 'LD', bg: '#558B2F',
+  },
+];
+
+const mockConversas = [
+  { id: 'c1', nome: 'João Pintor', lastMsg: 'Oi, tudo bem? Quando posso ir?', time: '10:30', unread: 2, initials: 'JP', bg: '#FF6B35' },
+  { id: 'c2', nome: 'Maria Marceneira', lastMsg: 'O orçamento ficou R$ 1.500,00', time: 'Ontem', unread: 0, initials: 'MM', bg: '#8B4513' },
+  { id: 'c3', nome: 'Carlos Eletricista', lastMsg: 'Disponível amanhã às 14h', time: 'Seg', unread: 1, initials: 'CE', bg: '#1565C0' },
+];
+
+const mockNotificacoes = [
+  { id: 'n1', tipo: 'nova_mensagem', titulo: 'Nova mensagem de João Pintor', corpo: 'Olá! Posso passar amanhã para dar uma olhada?', time: 'agora', unread: true },
+  { id: 'n2', tipo: 'avaliacao', titulo: 'Sua avaliação foi respondida', corpo: 'Maria Marceneira respondeu sua avaliação', time: '2h', unread: true },
+  { id: 'n3', tipo: 'sistema', titulo: 'Bem-vindo ao Tô na Lida!', corpo: 'Complete seu perfil para encontrar os melhores profissionais.', time: '1d', unread: false },
+];
+
+// ══════════════════════════════════════
+// NAVEGAÇÃO
+// ══════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+  state.currentScreen = id;
+
+  // Side effects por tela
+  if (id === 'screen-busca') renderProfissionais(mockProfissionais);
+  if (id === 'screen-conversas') renderConversas();
+  if (id === 'screen-favoritos') renderFavoritos();
+  if (id === 'screen-notificacoes') renderNotificacoes();
+  if (id === 'screen-chat') renderMensagens();
+}
+
+// ══════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════
+function fazerLogin() {
+  const email = document.getElementById('login-email').value;
+  const senha = document.getElementById('login-password').value;
+  if (!email || !senha) { showToast('Preencha e-mail e senha'); return; }
+  document.getElementById('user-email').textContent = email;
+  showToast('Login realizado com sucesso!');
+  setTimeout(() => showScreen('screen-busca'), 500);
+}
+
+function fazerLogout() {
+  showToast('Até logo!');
+  setTimeout(() => showScreen('screen-login'), 800);
+}
+
+// ══════════════════════════════════════
+// TIPO DE PERFIL
+// ══════════════════════════════════════
+function selecionarTipo(tipo) {
+  state.tipoPerfil = tipo;
+  document.getElementById('card-cliente').style.borderColor = tipo === 'cliente' ? '#FF6B35' : 'transparent';
+  document.getElementById('card-profissional').style.borderColor = tipo === 'profissional' ? '#FF6B35' : 'transparent';
+  document.getElementById('btn-continuar-tipo').disabled = false;
+}
+
+function continuarCadastro() {
+  if (!state.tipoPerfil) return;
+  if (state.tipoPerfil === 'profissional') {
+    showScreen('screen-cadastro-prof');
+  } else {
+    // Cliente vai direto para busca após cadastro simples
+    showToast('Cadastro de cliente em breve!');
+  }
+}
+
+// ══════════════════════════════════════
+// BUSCA DE PROFISSIONAIS
+// ══════════════════════════════════════
+function renderProfissionais(lista) {
+  state.profissionaisFiltrados = lista;
+  const el = document.getElementById('lista-profissionais');
+  if (!lista.length) {
+    el.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>Nenhum profissional encontrado para esta busca.</p></div>`;
+    return;
+  }
+  el.innerHTML = lista.map(p => `
+    <div class="prof-card" onclick="abrirPerfil('${p.id}')">
+      <div class="avatar" style="background:${p.bg};">${p.initials}</div>
+      <div class="prof-card-info">
+        <div class="prof-card-name">
+          ${p.nome_completo}
+          ${p.verificado ? '<span style="color:#4CAF50;font-size:14px;" title="Verificado">✓</span>' : ''}
+        </div>
+        <div class="prof-card-sub">
+          ${p.categoria_principal} • ${p.distancia}
+          ${p.destaque ? ' • <span class="badge badge-orange">Destaque</span>' : ''}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="stars" style="font-size:13px;">⭐ ${p.media_avaliacao}
+            <span>(${p.total_avaliacoes})</span>
+          </div>
+          <div class="prof-card-price">R$ ${p.valor_hora}/h</div>
+        </div>
+      </div>
+      <div class="prof-card-actions">
+        <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();iniciarChat('${p.id}')">💬</button>
+        <button class="btn btn-sm" style="background:none;border:none;font-size:20px;cursor:pointer;"
+                onclick="event.stopPropagation();toggleFavoritoLista('${p.id}', this)">🤍</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filtrarProfissionais() {
+  const termo = document.getElementById('search-input').value.toLowerCase();
+  const filtrado = mockProfissionais.filter(p =>
+    p.nome_completo.toLowerCase().includes(termo) ||
+    p.categoria_principal.toLowerCase().includes(termo)
+  );
+  renderProfissionais(filtrado);
+}
+
+function filtrarCategoria(el, slug) {
+  document.querySelectorAll('.filter-row .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  const filtrado = slug ? mockProfissionais.filter(p => p.categoria_slug === slug) : mockProfissionais;
+  renderProfissionais(filtrado);
+}
+
+// ══════════════════════════════════════
+// PERFIL DO PROFISSIONAL
+// ══════════════════════════════════════
+function abrirPerfil(id) {
+  const p = mockProfissionais.find(x => x.id === id);
+  if (!p) return;
+  state.profissionalAtual = p;
+  state.favoritoAtivo = false;
+  document.getElementById('prof-header-nome').textContent = p.nome_completo;
+  document.getElementById('prof-nome').textContent = p.nome_completo;
+  document.getElementById('prof-categoria').textContent = p.categoria_principal;
+  document.getElementById('prof-avaliacao-texto').textContent = `(${p.media_avaliacao} • ${p.total_avaliacoes} avaliações)`;
+  document.getElementById('prof-valor-hora').textContent = `R$ ${p.valor_hora}`;
+  document.getElementById('prof-experiencia').textContent = `${p.experiencia_anos} anos`;
+  document.getElementById('prof-bio').textContent = p.bio;
+  document.getElementById('prof-avatar-initials').textContent = p.initials;
+  document.getElementById('prof-avatar-initials').style.background = p.bg;
+  const loc = p.localizacoes[0];
+  document.getElementById('prof-localizacao').textContent = loc ? `${loc.bairro}, ${loc.cidade}` : 'Não informado';
+  document.getElementById('prof-verificado').style.display = p.verificado ? '' : 'none';
+  document.getElementById('fav-icon').textContent = '🤍';
+  showScreen('screen-perfil-prof');
+}
+
+function voltarBusca() {
+  showScreen('screen-busca');
+}
+
+function toggleFavorito() {
+  state.favoritoAtivo = !state.favoritoAtivo;
+  document.getElementById('fav-icon').textContent = state.favoritoAtivo ? '❤️' : '🤍';
+  showToast(state.favoritoAtivo ? 'Adicionado aos favoritos!' : 'Removido dos favoritos');
+}
+
+function toggleFavoritoLista(id, btn) {
+  const isFav = btn.textContent === '❤️';
+  btn.textContent = isFav ? '🤍' : '❤️';
+  showToast(isFav ? 'Removido dos favoritos' : 'Adicionado aos favoritos!');
+}
+
+function compartilhar() {
+  showToast('Link copiado para área de transferência!');
+}
+
+// ══════════════════════════════════════
+// CHAT
+// ══════════════════════════════════════
+const mockMensagens = [
+  { id: 1, remetente: 'cliente', conteudo: 'Olá, tudo bem?', time: '10:30', status: '✓✓' },
+  { id: 2, remetente: 'prof', conteudo: 'Tudo! Em que posso ajudar?', time: '10:32', status: '✓' },
+  { id: 3, remetente: 'cliente', conteudo: 'Preciso de um orçamento para pintura de um apartamento de 2 quartos.', time: '10:33', status: '✓✓' },
+  { id: 4, remetente: 'prof', conteudo: 'Claro! Qual é o tamanho aproximado em m²?', time: '10:35', status: '✓' },
+];
+
+function abrirChat() {
+  const p = state.profissionalAtual;
+  if (p) {
+    document.getElementById('chat-nome').textContent = p.nome_completo;
+    document.getElementById('chat-status').textContent = 'Online agora';
+  }
+  showScreen('screen-chat');
+}
+
+function iniciarChat(id) {
+  const p = mockProfissionais.find(x => x.id === id);
+  if (p) {
+    state.profissionalAtual = p;
+    abrirChat();
+  }
+}
+
+function renderMensagens() {
+  const el = document.getElementById('chat-messages');
+  el.innerHTML = mockMensagens.map(m => `
+    <div class="msg ${m.remetente === 'cliente' ? 'msg-sent' : 'msg-recv'}">
+      ${m.conteudo}
+      <div class="msg-time">${m.time} ${m.remetente === 'cliente' ? m.status : ''}</div>
+    </div>
+  `).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function enviarMensagem() {
+  const input = document.getElementById('msg-input');
+  const texto = input.value.trim();
+  if (!texto) return;
+  mockMensagens.push({
+    id: Date.now(), remetente: 'cliente',
+    conteudo: texto,
+    time: new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}),
+    status: '✓',
+  });
+  input.value = '';
+  renderMensagens();
+}
+
+function handleMsgKey(e) {
+  if (e.key === 'Enter') enviarMensagem();
+}
+
+// ══════════════════════════════════════
+// CONVERSAS
+// ══════════════════════════════════════
+function renderConversas() {
+  const el = document.getElementById('lista-conversas');
+  el.innerHTML = mockConversas.map(c => `
+    <div class="notif-item ${c.unread ? 'unread' : ''}" onclick="abrirConversaDireta('${c.id}','${c.nome}')">
+      <div class="avatar" style="background:${c.bg};font-size:16px;width:48px;height:48px;">${c.initials}</div>
+      <div style="flex:1;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-weight:${c.unread ? '700' : '600'};font-size:15px;">${c.nome}</div>
+          <div style="font-size:12px;color:#9e9e9e;">${c.time}</div>
+        </div>
+        <div style="font-size:13px;color:#757575;margin-top:2px;">${c.lastMsg}</div>
+      </div>
+      ${c.unread ? `<span style="background:#FF6B35;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">${c.unread}</span>` : ''}
+    </div>
+  `).join('');
+}
+
+function abrirConversaDireta(id, nome) {
+  document.getElementById('chat-nome').textContent = nome;
+  document.getElementById('chat-status').textContent = 'Online agora';
+  showScreen('screen-chat');
+}
+
+// ══════════════════════════════════════
+// FAVORITOS
+// ══════════════════════════════════════
+function renderFavoritos() {
+  const el = document.getElementById('lista-favoritos');
+  const favs = mockProfissionais.slice(0, 3); // Simulando favoritos
+  if (!favs.length) {
+    el.innerHTML = `<div class="empty-state"><div class="icon">💔</div><p>Nenhum favorito ainda.<br>Explore profissionais e salve seus preferidos!</p><button class="btn btn-primary btn-sm" onclick="showScreen('screen-busca')">Explorar</button></div>`;
+    return;
+  }
+  el.innerHTML = favs.map(p => `
+    <div class="prof-card" onclick="abrirPerfil('${p.id}')">
+      <div class="avatar" style="background:${p.bg};">${p.initials}</div>
+      <div class="prof-card-info">
+        <div class="prof-card-name">${p.nome_completo}</div>
+        <div class="prof-card-sub">${p.categoria_principal}</div>
+        <div class="stars" style="font-size:13px;">⭐ ${p.media_avaliacao} <span>(${p.total_avaliacoes})</span></div>
+      </div>
+      <button class="btn btn-sm" style="background:none;border:none;font-size:22px;cursor:pointer;"
+              onclick="event.stopPropagation();showToast('Removido dos favoritos')">❤️</button>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════
+// NOTIFICAÇÕES
+// ══════════════════════════════════════
+function renderNotificacoes() {
+  const el = document.getElementById('lista-notificacoes');
+  const icons = { nova_mensagem: '💬', avaliacao: '⭐', sistema: '🔔' };
+  el.innerHTML = mockNotificacoes.map(n => `
+    <div class="notif-item ${n.unread ? 'unread' : ''}" onclick="this.classList.remove('unread')">
+      <div style="font-size:28px;">${icons[n.tipo] ?? '🔔'}</div>
+      <div style="flex:1;">
+        <div style="font-weight:${n.unread ? '700' : '600'};font-size:14px;">${n.titulo}</div>
+        <div style="font-size:13px;color:#757575;margin-top:2px;">${n.corpo}</div>
+        <div style="font-size:11px;color:#9e9e9e;margin-top:4px;">${n.time}</div>
+      </div>
+      ${n.unread ? '<div class="notif-dot"></div>' : ''}
+    </div>
+  `).join('');
+}
+
+function marcarTodasLidas() {
+  document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
+  document.querySelectorAll('.notif-dot').forEach(el => el.remove());
+  showToast('Todas marcadas como lidas');
+}
+
+// ══════════════════════════════════════
+// STEPPER - CADASTRO PROFISSIONAL
+// ══════════════════════════════════════
+function goStep(step) {
+  // Validações básicas
+  if (step === 2) {
+    const nome = document.getElementById('cad-nome').value;
+    if (!nome) { showToast('Informe seu nome'); return; }
+  }
+  if (step === 4) {
+    const cat = document.getElementById('cad-categoria').value;
+    if (!cat) { showToast('Selecione uma categoria'); return; }
+  }
+
+  // Ocultar passo atual
+  document.getElementById(`step-${state.currentStep}`).classList.add('hidden');
+
+  // Atualizar stepper visual
+  const prev = state.currentStep;
+  state.currentStep = step;
+
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    dot.classList.remove('active', 'done');
+    if (i < step) dot.classList.add('done');
+    else if (i === step) dot.classList.add('active');
+  }
+  for (let i = 1; i <= 3; i++) {
+    const line = document.getElementById(`line-${i}`);
+    line.classList.toggle('done', i < step);
+  }
+
+  // Mostrar novo passo
+  document.getElementById(`step-${step}`).classList.remove('hidden');
+}
+
+function finalizarCadastro() {
+  showToast('✅ Cadastro finalizado! Bem-vindo ao Tô na Lida!');
+  setTimeout(() => {
+    document.getElementById('user-tipo').textContent = 'Profissional';
+    document.getElementById('user-tipo').classList.replace('badge-blue', 'badge-orange');
+    showScreen('screen-busca');
+  }, 1500);
+}
+
+// ══════════════════════════════════════
+// PORTFÓLIO UPLOAD
+// ══════════════════════════════════════
+let portfolioCount = 0;
+const emojis = ['🏠', '🖌️', '🎨', '🛠️', '⚡', '🔧', '💡', '🚿'];
+
+function simularUpload() {
+  portfolioCount++;
+  const grid = document.getElementById('portfolio-upload-grid');
+  const items = grid.querySelectorAll('.portfolio-item');
+  const addBtn = items[items.length - 1]; // último é o botão +
+
+  // Inserir antes do botão +
+  const newItem = document.createElement('div');
+  newItem.className = 'portfolio-item';
+  newItem.style.background = '#e8f5e9';
+  newItem.innerHTML = emojis[portfolioCount % emojis.length];
+  grid.insertBefore(newItem, addBtn);
+
+  showToast(`Foto ${portfolioCount} adicionada!`);
+}
+
+// ══════════════════════════════════════
+// CEP
+// ══════════════════════════════════════
+async function buscarCEP() {
+  const cep = document.getElementById('cad-cep').value.replace(/\D/g, '');
+  if (cep.length !== 8) { showToast('CEP inválido'); return; }
+  showToast('Buscando CEP...');
+  try {
+    const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const data = await r.json();
+    if (data.erro) { showToast('CEP não encontrado'); return; }
+    document.getElementById('cad-logradouro').value = data.logradouro ?? '';
+    document.getElementById('cad-bairro').value = data.bairro ?? '';
+    document.getElementById('cad-cidade').value = data.localidade ?? '';
+    document.getElementById('cad-estado').value = data.uf ?? '';
+    showToast('Endereço preenchido!');
+  } catch {
+    showToast('Erro ao buscar CEP');
+  }
+}
+
+// ══════════════════════════════════════
+// PERFIL USUÁRIO
+// ══════════════════════════════════════
+function editarPerfil() {
+  showToast('Edição de perfil em breve!');
+}
+
+// ══════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+renderProfissionais(mockProfissionais);
+</script>
+</body>
+</html>
